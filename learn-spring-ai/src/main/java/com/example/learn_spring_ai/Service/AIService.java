@@ -4,7 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
+import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -12,9 +16,24 @@ import org.springframework.stereotype.Service;
 public  class AIService {
      private final ChatClient chatClient;
      public String getJoke(String topic){
-       return  chatClient.prompt()
-                 .user("give me a joke the topic: "+topic)
+         String systemPrompt= """
+                 you are a sarcastic joker,you make poetic jokes in 8 lines.
+                 you don't make jokes about politics.
+                 Give a joke on the topic:{topic}
+                 """;
+
+         PromptTemplate promptTemplate =new PromptTemplate(systemPrompt);
+         String  renderedText = promptTemplate.render(Map.of("topic" , topic));
+
+
+
+   var response = chatClient.prompt()
+                 .user(renderedText)
+           .advisors(
+                   new SimpleLoggerAdvisor()
+           )
                  .call()
-                 .content();
+                 .chatClientResponse();
+   return response.chatResponse().getResult().getOutput().getText();
      }
 }

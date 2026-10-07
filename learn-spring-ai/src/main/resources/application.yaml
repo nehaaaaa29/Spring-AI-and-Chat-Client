@@ -7,3 +7,10 @@ spring:
       chat:
         options:
            model: qwen2.5-coder
+
+logging:
+  level:
+    org.springframework.ai:
+      chat.client: DEBUG
+
+

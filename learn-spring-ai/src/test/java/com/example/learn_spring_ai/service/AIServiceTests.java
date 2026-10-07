@@ -14,7 +14,7 @@ public class AIServiceTests {
     @Test
     public void testGetJoke(){
         //arrange
-var joke =aiService.getJoke("java dev");
+var joke =aiService.getJoke("cat");
         //act
         System.out.println(joke);
         //assert
