@@ -3,3 +3,7 @@ spring:
     name: learn-spring-ai
   ai:
     ollama:
+      base-url: http://localhost:11434
+      chat:
+        options:
+           model: qwen2.5-coder
