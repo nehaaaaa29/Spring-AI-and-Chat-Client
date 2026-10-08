@@ -26,6 +26,8 @@ public  class AIService {
      private final ChatClient chatClient;
      private final EmbeddingModel embeddingModel;
      private final VectorStore vectorStore;
+
+
      public float[] getEmbedding(String text){
       return    embeddingModel.embed(text);
 
