@@ -33,5 +33,11 @@ var joke =aiService.getJoke("cat");
     public void testStoreData(){
         aiService.ingestDataToVectorStore();
     }
+    @Test
+    public void testSimilaritySearch(){
+       var res= aiService.similaritySearch("space movie");
+       for(var doc:res)
+        System.out.println(doc);
+    }
 
 }
