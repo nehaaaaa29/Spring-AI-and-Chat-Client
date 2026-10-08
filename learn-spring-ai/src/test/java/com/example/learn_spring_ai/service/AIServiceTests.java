@@ -28,4 +28,10 @@ var joke =aiService.getJoke("cat");
             System.out.println(e+" ");
         }
     }
+
+    @Test
+    public void testStoreData(){
+        aiService.ingestDataTOVectorStore("this is a big text");
+    }
+
 }

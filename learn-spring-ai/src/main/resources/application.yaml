@@ -13,6 +13,8 @@ spring:
     vectorstore:
       pgvector:
         initialize-schema: true
+        index-type: HNSW
+        distance-type: COSINE_DISTANCE
   datasource:
     url: jdbc:postgresql://localhost:5432/mydatabase
     username: postgres
