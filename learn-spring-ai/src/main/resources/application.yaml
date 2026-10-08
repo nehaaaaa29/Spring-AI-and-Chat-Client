@@ -7,6 +7,9 @@ spring:
       chat:
         options:
            model: qwen2.5-coder
+      embedding:
+        options:
+          model: nomic-embed-text
 
 logging:
   level:

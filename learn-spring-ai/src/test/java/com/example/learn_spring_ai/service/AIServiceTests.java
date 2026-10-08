@@ -19,4 +19,13 @@ var joke =aiService.getJoke("cat");
         System.out.println(joke);
         //assert
     }
+    @Test
+
+    public void testEmbedText(){
+        var embed=aiService.getEmbedding("this is a ig text here");
+        System.out.println(embed.length);
+        for(float e: embed){
+            System.out.println(e+" ");
+        }
+    }
 }

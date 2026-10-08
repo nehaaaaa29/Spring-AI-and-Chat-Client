@@ -1,11 +1,14 @@
 package com.example.learn_spring_ai.Service;
 
+import com.example.learn_spring_ai.dto.Joke;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.ai.embedding.Embedding;
+import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -15,6 +18,13 @@ import java.util.Map;
 
 public  class AIService {
      private final ChatClient chatClient;
+     private final EmbeddingModel embeddingModel;
+     public float[] getEmbedding(String text){
+      return    embeddingModel.embed(text);
+
+     }
+
+
      public String getJoke(String topic){
          String systemPrompt= """
                  you are a sarcastic joker,you make poetic jokes in 8 lines.
@@ -33,7 +43,7 @@ public  class AIService {
                    new SimpleLoggerAdvisor()
            )
                  .call()
-                 .chatClientResponse();
-   return response.chatResponse().getResult().getOutput().getText();
+           .entity(Joke.class);
+   return response.text();
      }
 }
