@@ -10,11 +10,19 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class AIServiceTests {
     @Autowired
     private AIService aiService;
+    @Test
+    public void testAskAI(){
+        //arrange
+        var response =aiService.askAI("what is cells in human");
+        //act
+        System.out.println(response);
+        //assert
+    }
 
     @Test
     public void testGetJoke(){
         //arrange
-var joke =aiService.getJoke("cat");
+var joke =aiService.getJoke("sipper");
         //act
         System.out.println(joke);
         //assert

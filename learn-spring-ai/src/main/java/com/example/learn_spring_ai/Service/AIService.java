@@ -12,9 +12,11 @@ import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Service;
+import org.stringtemplate.v4.ST;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -28,6 +30,8 @@ public  class AIService {
       return    embeddingModel.embed(text);
 
      }
+
+
     public void ingestDataToVectorStore() {
         List<Document> movies = List.of(
                 new Document(
@@ -45,14 +49,81 @@ public  class AIService {
         );
 
         vectorStore.add(movies);
+        vectorStore.add(springAiDocs());
     }
 
-    public List<Document> similaritySearch(String text){
-         return vectorStore.similaritySearch(SearchRequest.builder()
-                         .query(text)
-                         .topK(3)
+    public String askAI(String prompt){
+         String template = """
+                 ypu are an AI assistant helping a developer.
+                 
+                 Rules:
+                 -Use ONLY the information provided in the context
+                 -you MAY rephrase,summarize,and explain in natural language
+                 -Do NOT introduce new concepts or facts
+                 -If multiple context sections are relevent, combine them into a single explanation.
+                 -if the answer is not present , say I don't know
+                 
+                 Context:
+                 {context}
+                 Answer in a friendly,conversational tone.""";
+
+
+
+         List<Document>documents =vectorStore.similaritySearch(SearchRequest.builder()
+                 .query(prompt)
+                 .topK(2)
+                 .filterExpression("topic== 'ai' or topic == 'vectorstore'")
                  .build());
+
+
+        String context=documents.stream()
+                .map(Document::getText)
+                .collect(Collectors.joining("\n\n"));
+
+
+        PromptTemplate promptTemplate =new PromptTemplate(template);
+       String systemPrompt = promptTemplate.render((Map.of("context",context)));
+
+
+                 return chatClient.prompt()
+                         .system(systemPrompt)
+                         .user(prompt)
+                         .advisors(
+                                 new SimpleLoggerAdvisor()
+                         )
+                         .call()
+                         .content();
     }
+
+
+
+
+
+    public List<Document> similaritySearch(String text){
+        return vectorStore.similaritySearch(SearchRequest.builder()
+                .query(text)
+                .topK(3)
+                .build());
+    }
+
+
+    public static List<Document> springAiDocs() {
+        return List.of(
+                new Document(
+                        "Spring AI provides abstractions like ChatClient, EmbeddingModel, and VectorStore.",
+                        Map.of("topic", "ai")
+                ),
+                new Document(
+                        "A VectorStore is used to persist embeddings and perform similarity search.",
+                        Map.of("topic", "vectorstore")
+                ),
+                new Document(
+                        "Retrieval Augmented Generation combines vector search with LLMs to ground responses.",
+                        Map.of("topic", "vectorstore")
+                )
+        );
+    }
+
 
 
      public String getJoke(String topic){
