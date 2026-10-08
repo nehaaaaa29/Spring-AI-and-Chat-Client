@@ -31,7 +31,7 @@ var joke =aiService.getJoke("cat");
 
     @Test
     public void testStoreData(){
-        aiService.ingestDataTOVectorStore("this is a big text");
+        aiService.ingestDataToVectorStore();
     }
 
 }
