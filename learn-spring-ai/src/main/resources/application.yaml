@@ -10,6 +10,14 @@ spring:
       embedding:
         options:
           model: nomic-embed-text
+    vectorstore:
+      pgvector:
+        initialize-schema: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mydatabase
+    username: postgres
+    password: "291026"
+    driver-class-name: org.postgresql.Driver
 
 logging:
   level:
