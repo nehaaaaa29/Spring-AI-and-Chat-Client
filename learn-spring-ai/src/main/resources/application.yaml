@@ -15,6 +15,13 @@ spring:
         initialize-schema: true
         index-type: HNSW
         distance-type: COSINE_DISTANCE
+    chat:
+      memory:
+        repository:
+          jdbc:
+            initialize-schema: always
+            table-name: chat_memory
+
   datasource:
     url: jdbc:postgresql://localhost:5432/mydatabase
     username: postgres

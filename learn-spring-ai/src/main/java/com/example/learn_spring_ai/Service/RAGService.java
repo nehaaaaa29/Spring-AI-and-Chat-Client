@@ -2,8 +2,10 @@ package com.example.learn_spring_ai.Service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.client.advisor.vectorstore.VectorStoreChatMemoryAdvisor;
+import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -19,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+
 @Service
 @RequiredArgsConstructor
 public class RAGService {
@@ -26,6 +29,8 @@ public class RAGService {
     private final ChatClient chatClient;
     private final EmbeddingModel embeddingModel;
     private final VectorStore vectorStore;
+    private final ChatMemory chatMemory;
+
     @Value("classpath:faq.pdf")
       private Resource pdfFile;
 
@@ -91,6 +96,11 @@ public class RAGService {
                         """)
                 .user(prompt)
                 .advisors(
+
+                        MessageChatMemoryAdvisor.builder(chatMemory)
+                                        .conversationId(userId)
+                                                .build(),
+
                    VectorStoreChatMemoryAdvisor.builder(vectorStore)
                            .conversationId(userId)
                            .defaultTopK(4)
