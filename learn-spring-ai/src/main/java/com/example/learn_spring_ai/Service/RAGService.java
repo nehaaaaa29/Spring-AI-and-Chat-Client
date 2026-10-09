@@ -3,6 +3,7 @@ package com.example.learn_spring_ai.Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
+import org.springframework.ai.chat.client.advisor.vectorstore.VectorStoreChatMemoryAdvisor;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -27,6 +28,7 @@ public class RAGService {
     private final VectorStore vectorStore;
     @Value("classpath:faq.pdf")
       private Resource pdfFile;
+
 
 
     public String askAI(String prompt){
@@ -79,6 +81,25 @@ public class RAGService {
     }
 
 
+
+    public String askAIWithAdvisors(String prompt,String userId){
+        return chatClient.prompt()
+                .system("""
+                        you are an AI assistant called Cody.
+                        Greet user with your Name(COdy) and the user name if you know their name.
+                        Answer in a friendly, conversational tone.
+                        """)
+                .user(prompt)
+                .advisors(
+                   VectorStoreChatMemoryAdvisor.builder(vectorStore)
+                           .conversationId(userId)
+                           .defaultTopK(4)
+                           .build  ()
+                )
+                .call()
+                .content();
+
+    }
 
     public static List<Document> springAiDocs() {
         return List.of(
